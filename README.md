@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Tracker
 
-## Getting Started
+This project is designed for people who are actively searching for jobs. It helps users track job applications, organize company details, and manage the status of each opportunity in one place.
 
-First, run the development server:
+## Instructions for Build and Use
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Steps to build and/or run the software:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Open a terminal in the project folder and install dependencies: `npm install`
+2. Start the development server: `npm run dev`
+3. Open the local URL shown in the terminal (usually http://localhost:3000) to use the app
+4. To create a production build, run: `npm run build`
+5. To run the production version locally, use: `npm run start`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Instructions for using the software:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Open the dashboard page and start adding a company where you want to work
+2. Add the job description, the job link, and the application progress step.
+3. Mark as complete
 
-## Learn More
+## Development Environment
 
-To learn more about Next.js, take a look at the following resources:
+To recreate the development environment, you need the following software and/or libraries with the specified versions:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Node.js 20 or newer
+* Next.js 16.3.5
+* React 19.2.8
+* React DOM 19.2.8
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Useful Websites to Learn More
 
-## Deploy on Vercel
+I found these websites useful in developing this software:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* [NextJS](https://nextjs.org)
+* [React](https://react.dev)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Future Work
+
+The following items I plan to fix, improve, and/or add to this project in the future:
+
+* [ ] Create additional pages for the dashboard, and the other one to add the jobs
+* [ ] Connect the app to a database to store job entries persistently
+* [ ] Improve the overall layout and user experience with a cleaner design
+* [ ] Add search, filtering, and sorting options for job applications
+* [ ] Test the app for usability and functionality before release

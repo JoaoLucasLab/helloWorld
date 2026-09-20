@@ -1,4 +1,4 @@
-# Job Tracker
+# Hello World | Future Job Tracker
 
 This project is designed for people who are actively searching for jobs. It helps users track job applications, organize company details, and manage the status of each opportunity in one place.
 

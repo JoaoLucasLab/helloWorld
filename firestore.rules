@@ -1,0 +1,54 @@
+rules_version = '2';
+
+// Paste this into Firebase console → Firestore Database → Rules, then Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isValidApplication(data) {
+      return data.keys().hasOnly(["company", "status", "link", "date", "description", "createdAt", "updatedAt"])
+        && data.company is string && data.company.size() > 0 && data.company.size() <= 200
+        && data.status in ["Interested", "Applied", "Interview", "Offer", "Rejected"]
+        && data.link is string && data.link.size() <= 2000
+        && data.date is string && data.date.size() <= 10
+        && data.description is string && data.description.size() <= 5000;
+    }
+
+    function isValidProfile(data) {
+      return data.keys().hasOnly(["name", "email", "photoURL", "photoData", "createdAt", "updatedAt"])
+        // Uploaded photos are small JPEG data URLs (resized to 256×256 in the browser).
+        && (!("photoData" in data) || data.photoData == null
+          || (data.photoData is string && data.photoData.size() <= 400000));
+    }
+
+    function isValidShortcut(data) {
+      return data.keys().hasOnly(["type", "label", "url", "createdAt"])
+        && data.type in ["linkedin", "github", "portfolio", "leetcode", "other"]
+        && data.label is string && data.label.size() > 0 && data.label.size() <= 40
+        // Only web links, so a shortcut can never run script when clicked.
+        && data.url is string && data.url.size() <= 2000 && data.url.matches("^https?://.+")
+        && data.createdAt is timestamp;
+    }
+
+    // Each user's profile, and everything that belongs to them, lives under users/{userId}.
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidProfile(request.resource.data);
+
+      match /applications/{applicationId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId) && isValidApplication(request.resource.data);
+      }
+
+      match /shortcuts/{shortcutId} {
+        allow read, delete: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidShortcut(request.resource.data);
+      }
+    }
+
+    // Anything not matched above (including the old top-level "applications" collection) is denied.
+  }
+}

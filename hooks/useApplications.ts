@@ -9,23 +9,37 @@ import {
   updateApplication,
 } from "@/services/applicationService";
 
-export function useApplications() {
+export function useApplications(userId: string) {
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadApplications() {
-      const data = await getApplications();
+    let isCurrent = true;
 
-      setApplications(data);
-      setIsLoading(false);
+    async function loadApplications() {
+      try {
+        const data = await getApplications(userId);
+
+        if (isCurrent) setApplications(data);
+      } catch (loadError) {
+        console.error(loadError);
+        if (isCurrent) setError("Could not load applications. Check your Firebase configuration and connection.");
+      } finally {
+        if (isCurrent) setIsLoading(false);
+      }
     }
 
     loadApplications();
-  }, []);
 
-  async function addApplication(application: Application) {
-    const newApplication = await createApplication(application);
+    // Ignore a slow response if the user changes (e.g. signs out) before it arrives.
+    return () => {
+      isCurrent = false;
+    };
+  }, [userId]);
+
+  async function addApplication(application: Omit<Application, "id">) {
+    const newApplication = await createApplication(userId, application);
 
     setApplications((currentApplications) => [
       ...currentApplications,
@@ -34,7 +48,7 @@ export function useApplications() {
   }
 
   async function editApplication(application: Application) {
-    const updatedApplication = await updateApplication(application);
+    const updatedApplication = await updateApplication(userId, application);
 
     setApplications((currentApplications) =>
       currentApplications.map((currentApplication) =>
@@ -46,7 +60,7 @@ export function useApplications() {
   }
 
   async function removeApplication(id: string) {
-    await deleteApplication(id);
+    await deleteApplication(userId, id);
 
     setApplications((currentApplications) =>
       currentApplications.filter((application) => application.id !== id)
@@ -56,6 +70,7 @@ export function useApplications() {
   return {
     applications,
     isLoading,
+    error,
     addApplication,
     editApplication,
     removeApplication,

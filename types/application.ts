@@ -1,6 +1,6 @@
 export type ApplicationStatus = 
   | "Interested"
-  | "Appliede"
+  | "Applied"
   | "Interview"
   | "Offer"
   | "Rejected";
@@ -13,4 +13,4 @@ export type Application = {
   link: string;
   date: string;
   description: string;
-}
+};

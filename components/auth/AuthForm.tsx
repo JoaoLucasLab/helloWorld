@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { SyntheticEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Wordmark } from "@/components/ui/Wordmark";
 import { getAuthErrorMessage, useAuth } from "@/context/AuthContext";
 
 type AuthFormProps = { mode: "login" | "signup" };
@@ -48,7 +49,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   return (
     <main className="auth-page">
       <div className="auth-card">
-        <div className="brand auth-brand"><span className="brand-mark">A</span>ApplyFlow</div>
+        <div className="brand auth-brand"><Wordmark /></div>
         <p className="eyebrow">{isSignup ? "Get started" : "Welcome back"}</p>
         <h1>{isSignup ? "Create your account" : "Log in to your account"}</h1>
         <button type="button" onClick={() => run(signInWithGoogle)} disabled={isSubmitting} className="google-button">

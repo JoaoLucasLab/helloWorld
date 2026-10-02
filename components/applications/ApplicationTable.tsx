@@ -3,8 +3,9 @@
 import { useState } from "react";
 import type { Application, ApplicationStatus } from "@/types/application";
 import { ApplicationRow } from "./ApplicationRow";
+import { EditApplicationDialog } from "./EditApplicationDialog";
 
-type ApplicationTableProps = { applications: Application[]; onDelete: (id: string) => Promise<void> };
+type ApplicationTableProps = { applications: Application[]; onEdit: (application: Application) => Promise<void>; onDelete: (id: string) => Promise<void> };
 type SortKey = "company" | "status" | "date";
 type SortDirection = "asc" | "desc";
 
@@ -25,9 +26,10 @@ function sortApplications(applications: Application[], key: SortKey, direction: 
   });
 }
 
-export function ApplicationTable({ applications, onDelete }: ApplicationTableProps) {
+export function ApplicationTable({ applications, onEdit, onDelete }: ApplicationTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [editing, setEditing] = useState<Application | null>(null);
 
   if (!applications.length) return <div className="empty-state">No applications yet. Add your first one above.</div>;
 
@@ -47,5 +49,5 @@ export function ApplicationTable({ applications, onDelete }: ApplicationTablePro
   }
 
   const sortedApplications = sortApplications(applications, sortKey, sortDirection);
-  return <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500"><tr>{sortableHeader("company", "Company")}{sortableHeader("status", "Status")}{sortableHeader("date", "Applied")}<th className="px-4 py-3">Description</th><th className="px-4 py-3">Actions</th></tr></thead><tbody>{sortedApplications.map((application) => <ApplicationRow key={application.id} application={application} onDelete={onDelete} />)}</tbody></table></div>;
+  return <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500"><tr>{sortableHeader("company", "Company")}{sortableHeader("status", "Status")}{sortableHeader("date", "Applied")}<th className="px-4 py-3">Description</th><th className="px-4 py-3">Actions</th></tr></thead><tbody>{sortedApplications.map((application) => <ApplicationRow key={application.id} application={application} onEdit={setEditing} onDelete={onDelete} />)}</tbody></table>{editing && <EditApplicationDialog application={editing} onSave={onEdit} onClose={() => setEditing(null)} />}</div>;
 }

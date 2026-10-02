@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import type { MouseEvent, SyntheticEvent } from "react";
+import { useId, useState } from "react";
+import type { SyntheticEvent } from "react";
+import { Modal } from "@/components/ui/Modal";
 import { normalizeUrl, shortcutOptions } from "@/lib/shortcuts";
 import { addShortcut } from "@/services/shortcutService";
 import type { ShortcutType } from "@/types/shortcut";
@@ -10,7 +11,6 @@ import { ShortcutTypeSelect } from "./ShortcutTypeSelect";
 type AddShortcutDialogProps = { userId: string; onClose: () => void };
 
 export function AddShortcutDialog({ userId, onClose }: AddShortcutDialogProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const websiteLabelId = useId();
   const [type, setType] = useState<ShortcutType>("linkedin");
   const [name, setName] = useState("");
@@ -19,22 +19,6 @@ export function AddShortcutDialog({ userId, onClose }: AddShortcutDialogProps) {
   const [error, setError] = useState<string | null>(null);
   const option = shortcutOptions.find((item) => item.type === type)!;
   const isOther = type === "other";
-
-  // showModal() gives us the backdrop, focus trapping and Escape-to-close for free.
-  // No cleanup: the dialog is removed from the page when this component unmounts.
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (dialog && !dialog.open) dialog.showModal();
-  }, []);
-
-  // Clicks on the dialog's own padding also target the <dialog>, so check whether
-  // the click actually landed outside the box (on the backdrop).
-  function handleBackdropClick(event: MouseEvent<HTMLDialogElement>) {
-    if (event.target !== dialogRef.current) return;
-    const box = dialogRef.current.getBoundingClientRect();
-    const isInside = event.clientX >= box.left && event.clientX <= box.right && event.clientY >= box.top && event.clientY <= box.bottom;
-    if (!isInside) onClose();
-  }
 
   async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,11 +42,11 @@ export function AddShortcutDialog({ userId, onClose }: AddShortcutDialogProps) {
   }
 
   return (
-    <dialog ref={dialogRef} onClose={onClose} onClick={handleBackdropClick} aria-labelledby={websiteLabelId + "-title"} className="shortcut-dialog">
+    <Modal onClose={onClose} labelledBy={websiteLabelId + "-title"}>
       <form onSubmit={handleSubmit} className="grid gap-4">
         <div>
           <p className="eyebrow">Shortcuts</p>
-          <h2 id={websiteLabelId + "-title"} className="shortcut-dialog-title">Add a section</h2>
+          <h2 id={websiteLabelId + "-title"} className="modal-title">Add a section</h2>
         </div>
         <div className="field-label">
           <span id={websiteLabelId}>Website</span>
@@ -76,6 +60,6 @@ export function AddShortcutDialog({ userId, onClose }: AddShortcutDialogProps) {
           <button type="submit" disabled={isSaving} className="primary-button disabled:opacity-60">{isSaving ? "Saving..." : "Add"}</button>
         </div>
       </form>
-    </dialog>
+    </Modal>
   );
 }
